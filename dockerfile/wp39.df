@@ -1,6 +1,7 @@
 #
 # https://github.com/WordPress/WordPress/tree/3.9-branch
 # base on https://index.docker.io/u/tutum/wordpress/
+# git version too old to support --branch
 #
 FROM tutum/lamp:latest
 MAINTAINER Y12STUDIO <y12studio@gmail.com>
