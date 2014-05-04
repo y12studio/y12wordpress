@@ -1,9 +1,9 @@
 === Y12 Shortcode Hello ===
-Contributors: hlashbrooke
-Donate link: http://www.hughlashbrooke.com/donate
+Contributors: Y12STUDIO
+Donate link: http://y12.tw/
 Tags: wordpress, plugin, template
 Requires at least: 3.8
-Tested up to: 3.8.1
+Tested up to: 3.9
 Stable tag: 1.0
 
 {short_description}
