@@ -2,7 +2,9 @@ module.exports = function (grunt) {
 
 	// Project configuration.
 	grunt.initConfig({
-		pluginzip : 'build/y12-shortcode-hello.zip',
+		// plugin id
+		pid : "y12-shortcode-hello",
+		pluginzip : 'build/<%= pid %>.zip',
 		pkg : grunt.file.readJSON('package.json'),
 		secret : grunt.file.readJSON('secret.json'),
 		// Before generating any new files, remove any previously-created files.
@@ -30,7 +32,7 @@ module.exports = function (grunt) {
 
 		sshexec : {
 			pgup : {
-				command : 'cd /home/docker && grunt exec:pgup:y12-shortcode-hello',
+				command : 'cd /home/docker && grunt exec:pgup:<%= pid %>',
 				options : {
 					host : '<%= secret.host %>',
 					port : 8022,
@@ -54,8 +56,8 @@ module.exports = function (grunt) {
 			},
 			dk_run : {
 				// http://y12.tw/wp/2014/05/wordpress-3-9-docker-install/
-				cmd : 'sudo docker.io run -d -p 80:80 test/wp39")',
-				exitCodes : [1, 2]
+				cmd : 'sudo docker.io run -d -p 80:80 -p 8022:22 test/wp39',
+				exitCodes : [0]
 			}
 		},
 
@@ -63,7 +65,6 @@ module.exports = function (grunt) {
 			options : {
 				// sudo apt-get install php5-cli
 				// which php
-
 				phpCmd : "/usr/bin/php",
 				phpArgs : {
 					'-lf' : null
@@ -89,7 +90,7 @@ module.exports = function (grunt) {
 				},
 				files : [{
 						src : ['**/*', '!node_modules/**', '!package.json', '!Gruntfile.js', '!.gitignore', '!secret.json'],
-						dest : 'y12-shortcode-hello/'
+						dest : '<%= pid %>/'
 					}
 				]
 			}
@@ -107,7 +108,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-ssh');
 
 	// Default task(s).
-	grunt.registerTask('deploy', ['clean', 'phplint', 'po2mo', 'compress', 'sftp:upload','sshexec:pgup']);
+	grunt.registerTask('deploy', ['clean', 'phplint', 'po2mo', 'compress', 'sftp:upload', 'sshexec:pgup']);
 	grunt.registerTask('default', ['clean', 'phplint', 'po2mo', 'compress']);
 
 };
