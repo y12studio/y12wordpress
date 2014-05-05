@@ -2,10 +2,42 @@ module.exports = function (grunt) {
 
 	// Project configuration.
 	grunt.initConfig({
+		pluginzip : 'build/y12-shortcode-hello.zip',
 		pkg : grunt.file.readJSON('package.json'),
+		secret : grunt.file.readJSON('secret.json'),
 		// Before generating any new files, remove any previously-created files.
 		clean : {
 			main : ['build']
+		},
+
+		sftp : {
+			upload : {
+				files : {
+					"./" : "<%= pluginzip %>"
+				},
+				options : {
+					path : '/home/docker/tmp',
+					host : '<%= secret.host %>',
+					port : 8022,
+					username : '<%= secret.username %>',
+					password : '<%= secret.password %>',
+					// why ??
+					srcBasePath : "build/",
+					showProgress : true
+				}
+			}
+		},
+
+		sshexec : {
+			pgup : {
+				command : 'cd /home/docker && grunt exec:pgup:y12-shortcode-hello',
+				options : {
+					host : '<%= secret.host %>',
+					port : 8022,
+					username : '<%= secret.username %>',
+					password : '<%= secret.password %>'
+				}
+			}
 		},
 
 		exec : {
@@ -53,10 +85,10 @@ module.exports = function (grunt) {
 		compress : {
 			main : {
 				options : {
-					archive : 'build/y12-shortcode-hello-v0.0.1.zip'
+					archive : '<%= pluginzip %>'
 				},
 				files : [{
-						src : ['**/*', '!node_modules/**', '!package.json', '!Gruntfile.js', '!.gitignore'],
+						src : ['**/*', '!node_modules/**', '!package.json', '!Gruntfile.js', '!.gitignore', '!secret.json'],
 						dest : 'y12-shortcode-hello/'
 					}
 				]
@@ -72,8 +104,10 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-po2mo');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks("grunt-phplint");
+	grunt.loadNpmTasks('grunt-ssh');
 
 	// Default task(s).
+	grunt.registerTask('deploy', ['clean', 'phplint', 'po2mo', 'compress', 'sftp:upload','sshexec:pgup']);
 	grunt.registerTask('default', ['clean', 'phplint', 'po2mo', 'compress']);
 
 };

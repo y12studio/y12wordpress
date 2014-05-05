@@ -228,7 +228,7 @@ msgstr ""
 #: includes/class-y12-shortcode-hello-settings.php:70
 #: includes/class-y12-shortcode-hello-settings.php:405
 msgid "Plugin Settings"
-msgstr "Y12外掛設定"
+msgstr "簡碼設定Y12"
 
 #: includes/class-y12-shortcode-hello-settings.php:99
 msgid "Settings"
