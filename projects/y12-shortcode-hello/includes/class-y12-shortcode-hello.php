@@ -106,7 +106,15 @@ class Y12_Shortcode_Hello {
 		// Handle localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+		
+		//
+		// add shortcode
+		add_shortcode( 'y12-hello', array( $this, 'y12_hello_world' ));
 	}
+	
+	 public function y12_hello_world($atts, $content="") {
+        return 'Hello, Y12STUDIO!';
+    } 
 
 	/**
 	 * Load frontend CSS.
@@ -116,7 +124,6 @@ class Y12_Shortcode_Hello {
 	 */
 	public function enqueue_styles () {
 		global $woothemes_sensei;
-
 		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array( $woothemes_sensei->token . '-frontend' ), $this->_version );
 		wp_enqueue_style( $this->_token . '-frontend' );
 	} // End enqueue_styles()

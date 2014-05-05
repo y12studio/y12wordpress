@@ -16,10 +16,12 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+define('WP_DEBUG', true);
+
 // Include plugin class files
 require_once( 'includes/class-y12-shortcode-hello.php' );
 require_once( 'includes/class-y12-shortcode-hello-settings.php' );
-load_plugin_textdomain( 'y12-shortcode-hello', false, basename( dirname( __FILE__ ) ).'/lang/' );
+
 /**
  * Returns the main instance of Y12_Shortcode_Hello to prevent the need to use globals.
  *
