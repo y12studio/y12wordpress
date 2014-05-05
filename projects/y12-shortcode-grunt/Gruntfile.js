@@ -86,10 +86,11 @@ module.exports = function (grunt) {
 		compress : {
 			main : {
 				options : {
+					mode : 'zip',
 					archive : '<%= pluginzip %>'
 				},
 				files : [{
-						src : ['**/*', '!node_modules/**', '!package.json', '!Gruntfile.js', '!.gitignore', '!secret.json'],
+						src : ['**/*', '!build/*.zip','!package.json', '!node_modules/**', '!Gruntfile.js', '!.gitignore', '!secret.json'],
 						dest : '<%= pid %>/'
 					}
 				]
@@ -108,7 +109,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-ssh');
 
 	// Default task(s).
-	grunt.registerTask('deploy', ['clean', 'phplint', 'po2mo', 'compress', 'sftp:upload', 'sshexec:pgup']);
-	grunt.registerTask('default', ['clean', 'phplint', 'po2mo', 'compress']);
+	grunt.registerTask('deploy', ['clean', 'phplint', 'po2mo', 'compress:main', 'sftp:upload', 'sshexec:pgup']);
+	grunt.registerTask('default', ['clean', 'phplint', 'po2mo', 'compress:main']);
 
 };
