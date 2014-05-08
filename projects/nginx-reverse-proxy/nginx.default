@@ -1,0 +1,11 @@
+server {
+	listen 80;
+	 # .domain.com will match both domain.com and anything.domain.com
+	server_name _;
+	
+	index index.html index.htm;
+
+	location / {
+		root /var/www;
+	}
+}
