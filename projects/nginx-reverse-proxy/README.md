@@ -7,7 +7,7 @@ how to inject Gruntfile.js
 $ grunt dk-build:test/ng
 $ nano Gruntfile.js.inject
 // inside container # grunt cat:/root/package.json
-$ grunt dk-yrunt:test/ng --target=cat:/root/package.json
+$ grunt yrunt:test/ng --target=cat:/root/package.json
 ```
 
 grunt task

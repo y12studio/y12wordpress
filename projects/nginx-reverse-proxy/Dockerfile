@@ -21,11 +21,11 @@ RUN apt-get install -y software-properties-common && \
 	npm install -g grunt-cli
 
 ADD package.json.inject /root/package.json
-ADD Gruntfile.js.inject /root/Gruntfile.js
+ADD Gruntfile.js.inject /root/
 RUN cd /root && npm install
 
-ADD yurnt.sh /
-RUN chmod +x /yurnt.sh
+ADD yrunt.sh /
+RUN chmod +x /yrunt.sh
 
 WORKDIR /root
 

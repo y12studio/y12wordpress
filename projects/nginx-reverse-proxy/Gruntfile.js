@@ -113,24 +113,15 @@ module.exports = function (grunt) {
 		grunt.task.run('exec:dk_build:' + img, 'exec:dk_images_grep:' + img);
 	});
 
-	grunt.registerTask('dk-yrunt-i', 'run grunt in container, ex grunt dk-yrunt-i:test/img --target=cat:/root/package.json ', function (img) {
+	grunt.registerTask('yrunt', 'run grunt in container, ex grunt yrunt:test/img --target=index-ip', function (img) {
 		checkImgArg(img);
 		// console.log(this.args);
 		var target = grunt.option('target') || '';
 		//console.log(target);
 		console.log('run a container and inject Gruntfile.js.inject to the container.');
-		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -i ' + img + ' /yurnt.sh ' + target;
+		// pipe file into container only in attached mode(-d not work) 
+		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -i -p 80:80 ' + img + ' /yrunt.sh ' + target + ' &';
 		runexec(cmd);
-	});
-	
-	grunt.registerTask('dk-yrunt-d', 'run nginx in container, ex grunt dk-yrunt-d:test/img --target=start ', function (img) {
-		checkImgArg(img);
-		var target = grunt.option('target') || '';
-		//console.log(target);
-		console.log('run a container and inject Gruntfile.js.inject to the container.');
-		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -d -p 80:80 ' + img + ' /yurnt.sh ' + target;
-		runexec(cmd);
-		grunt.task.run('dk-psip');
 	});
 	
 	function runexec(cmd){
@@ -139,10 +130,6 @@ module.exports = function (grunt) {
 		grunt.task.run('exec:opt');
 	}
 
-	grunt.registerTask('dk-brun-basic', 'stop, build and run basic docker image', function (img) {
-		checkImgArg(img);
-		grunt.task.run('dk-stop-all', 'dk-build-basic:' + img, 'dk-run-basic:' + img);
-	});
 
 	grunt.registerTask('dk-stop-all', 'Stop all docker container', ['exec:dk_stop_all']);
 	grunt.registerTask('dk-psip', 'docker ps and ip', ['exec:dk_ps', 'exec:dk_ip']);
