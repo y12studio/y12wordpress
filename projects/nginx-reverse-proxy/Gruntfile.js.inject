@@ -21,6 +21,11 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+		nginx : {
+			options : {
+				config : '/etc/nginx/nginx.conf'
+			}
+		},
 		replace : {
 			index : {
 				src : ['/usr/share/nginx/html/index.html'],
@@ -60,6 +65,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-text-replace');
 	grunt.loadNpmTasks('grunt-shell-spawn');
+	grunt.loadNpmTasks('grunt-nginx');
 
 	function checkArg(arg) {
 		console.log('Check arg :' + arg);
@@ -86,7 +92,8 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('start', 'modify index.html and start nginx', function () {
-		grunt.task.run('index-ip','shell:nginx');
+		//grunt.task.run('index-ip', 'shell:nginx');
+		grunt.task.run('index-ip','nginx:start');
 	});
 
 	grunt.registerTask('cat', 'cat file', function (filepath) {

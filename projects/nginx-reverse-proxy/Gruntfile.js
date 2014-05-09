@@ -117,7 +117,7 @@ module.exports = function (grunt) {
 		}
 	}
 
-	grunt.registerTask('dk-build', 'build docker image', function (img) {
+	grunt.registerTask('dk-build', 'build docker image, ex grunt dk-build:test/img', function (img) {
 		checkImgArg(img);
 		grunt.task.run('exec:dk_build:' + img, 'exec:dk_images_grep:' + img);
 	});
