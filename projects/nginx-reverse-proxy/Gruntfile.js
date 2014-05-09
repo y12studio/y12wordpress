@@ -1,5 +1,7 @@
 module.exports = function (grunt) {
 
+	var S = require('string');
+
 	// Project configuration.
 	grunt.initConfig({
 		pkg : grunt.file.readJSON('package.json'),
@@ -56,6 +58,11 @@ module.exports = function (grunt) {
 				},
 				exitCodes : [0]
 			},
+
+			opt : {
+				cmd : '<%=grunt.option("exec.cmd")%>',
+				exitCodes : [0]
+			},
 			dk_run_http : {
 				cmd : function (img, tag, port) {
 					//var name = 'ssl-' + img.replace('/', '-');
@@ -95,43 +102,52 @@ module.exports = function (grunt) {
 
 	function checkImgArg(img) {
 		console.log('Check docker image :' + img);
-		if (!img) {
+		if (S(img).isEmpty()) {
 			grunt.fail.fatal('docker image name must provide. ');
 			return;
 		}
 	}
 
-	grunt.registerTask('dk-build-basic', 'build docker basic image', function (img) {
+	grunt.registerTask('dk-build', 'build docker image', function (img) {
 		checkImgArg(img);
-		grunt.task.run('df-basic', 'exec:dk_build:' + img, 'exec:dk_images_grep:' + img);
+		grunt.task.run('exec:dk_build:' + img, 'exec:dk_images_grep:' + img);
 	});
 
-	grunt.registerTask('dk-run-basic', 'run docker basic image', function (img) {
+	grunt.registerTask('dk-yrunt-i', 'run grunt in container, ex grunt dk-yrunt-i:test/img --target=cat:/root/package.json ', function (img) {
 		checkImgArg(img);
-		grunt.task.run('exec:dk_run_basic:' + img, 'dk-psip');
+		// console.log(this.args);
+		var target = grunt.option('target') || '';
+		//console.log(target);
+		console.log('run a container and inject Gruntfile.js.inject to the container.');
+		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -i ' + img + ' /yurnt.sh ' + target;
+		runexec(cmd);
 	});
-
-	grunt.registerTask('dk-run-ssl', 'run docker ssl image', function (img) {
+	
+	grunt.registerTask('dk-yrunt-d', 'run nginx in container, ex grunt dk-yrunt-d:test/img --target=start ', function (img) {
 		checkImgArg(img);
-		grunt.task.run('exec:dk_run_ssl:' + img, 'dk-psip');
+		var target = grunt.option('target') || '';
+		//console.log(target);
+		console.log('run a container and inject Gruntfile.js.inject to the container.');
+		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -d -p 80:80 ' + img + ' /yurnt.sh ' + target;
+		runexec(cmd);
+		grunt.task.run('dk-psip');
 	});
+	
+	function runexec(cmd){
+	console.log(cmd);
+		grunt.option("exec.cmd", cmd);
+		grunt.task.run('exec:opt');
+	}
 
 	grunt.registerTask('dk-brun-basic', 'stop, build and run basic docker image', function (img) {
 		checkImgArg(img);
 		grunt.task.run('dk-stop-all', 'dk-build-basic:' + img, 'dk-run-basic:' + img);
 	});
 
-	grunt.registerTask('dk-brun-ssl', 'stop, build and run ssl docker image', function (img) {
-		checkImgArg(img);
-		grunt.task.run('dk-stop-all', 'dk-build-ssl:' + img, 'dk-run-ssl:' + img);
-	});
-
 	grunt.registerTask('dk-stop-all', 'Stop all docker container', ['exec:dk_stop_all']);
 	grunt.registerTask('dk-psip', 'docker ps and ip', ['exec:dk_ps', 'exec:dk_ip']);
 	grunt.registerTask('dk-clean', ['exec:dk_rm', 'exec:dk_rmi']);
-	grunt.registerTask('df-ssl', 'build Dockerfile for ssl.', ['clean', 'concat:ssl']);
-	
-	grunt.registerTask('df-basic', 'build basic Dockerfile', ['clean', 'concat:basic']);
+	// grunt.registerTask('df-basic', 'build basic Dockerfile', ['clean', 'concat:basic']);
 	// Default task(s).
 	grunt.registerTask('default', ['exec:grunt_help']);
 

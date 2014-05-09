@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 
 # Install Nginx.
-RUN apt-get update && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx nano git curl wget
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 
 # /etc/nginx/sites-enabled/default
@@ -20,11 +20,14 @@ RUN apt-get install -y software-properties-common && \
 	apt-get update && apt-get install -y nodejs &&\
 	npm install -g grunt-cli
 
-ADD package.json /root/
+ADD package.json.inject /root/package.json
+ADD Gruntfile.js.inject /root/Gruntfile.js
 RUN cd /root && npm install
 
 ADD yurnt.sh /
 RUN chmod +x /yurnt.sh
+
+WORKDIR /root
 
 # Expose ports.
 EXPOSE 80

@@ -1,0 +1,105 @@
+module.exports = function (grunt) {
+
+	grunt.file.defaultEncoding = 'utf8';
+
+	var S = require('string');
+
+	// Project configuration.
+	grunt.initConfig({
+
+		pkg : grunt.file.readJSON('package.json'),
+
+		clean : {
+			main : ['Dockerfile']
+		},
+
+		exec : {
+			grunt_help : 'grunt --help',
+			echo_test : {
+				cmd : function (name) {
+					return 'echo ' + name + ' ...';
+				}
+			}
+		},
+		replace : {
+			index : {
+				src : ['/usr/share/nginx/html/index.html'],
+				dest : '/usr/share/nginx/html/index.html',
+				replacements : [{
+						from : 'Y12_TITLE',
+						to : '<%=grunt.option("index.title")%>'
+					}, {
+						from : 'Y12_CONTENT',
+						to : '<%=grunt.option("index.content")%>'
+					}
+				]
+			}
+		},
+		shell : {
+			nginx : {
+				command : '/usr/sbin/nginx',
+				options : {
+					async : false
+				}
+			},
+		},
+		concat : {
+			basic : {
+				src : [
+					'dockerfiles/Dockerfile.header',
+				],
+				dest : 'Dockerfile',
+			},
+		},
+	});
+
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-exec');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-zip');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-text-replace');
+	grunt.loadNpmTasks('grunt-shell-spawn');
+
+	function checkArg(arg) {
+		console.log('Check arg :' + arg);
+		if (!arg) {
+			grunt.fail.fatal('arg must provide.');
+			return;
+		}
+	}
+	grunt.registerTask('index-ip', 'show ifconfig info in the index.html ', function () {
+		//console.log(grunt.file.read('/usr/share/nginx/html/index.html'));
+		var done = this.async();
+		grunt.util.spawn({
+			cmd : '/sbin/ifconfig'
+		}, function (error, result, code) {
+			r = String(result);
+			//console.log('RESULT='+r);
+			grunt.option('index.title', 'Hello ' + grunt.template.today('isoDateTime'));
+			grunt.option('index.content', r);
+			//console.log(grunt.option("index.content"));
+			grunt.task.run('replace:index');
+			grunt.task.run('cat:/usr/share/nginx/html/index.html');
+			done(true);
+		});
+	});
+
+	grunt.registerTask('start', 'modify the index.html and start nginx ', function () {
+		grunt.task.run('index-ip','shell:nginx');
+	});
+
+	grunt.registerTask('cat', 'cat file', function (filepath) {
+		checkArg(filepath);
+		console.log(grunt.file.read(filepath));
+	});
+
+	grunt.registerTask('test arg', 'test', function (arg) {
+		checkImgArg(arg);
+
+	});
+
+	// Default task(s).
+	grunt.registerTask('default', ['exec:grunt_help']);
+
+};
