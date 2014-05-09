@@ -33,4 +33,4 @@ WORKDIR /root
 EXPOSE 80
 
 # Define default command.
-CMD ["nginx"]
+CMD ["/yrunt.sh"]

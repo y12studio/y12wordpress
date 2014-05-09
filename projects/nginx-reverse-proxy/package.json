@@ -8,6 +8,8 @@
 		"grunt-zip":"~0.13.0",
 		"grunt-exec":"~0.4.5",
 		"string":"~1.8.1",
+		"grunt-text-replace":"~0.3.11",
+		"grunt-shell-spawn":"~0.3.0",
 		"grunt-contrib-concat":"~0.4.0"
     }
 }

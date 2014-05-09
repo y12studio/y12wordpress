@@ -85,8 +85,8 @@ module.exports = function (grunt) {
 		});
 	});
 
-	grunt.registerTask('test-shell-start-nginx-only', 'test only', function () {
-		//grunt.task.run('index-ip','shell:nginx');
+	grunt.registerTask('start', 'modify index.html and start nginx', function () {
+		grunt.task.run('index-ip','shell:nginx');
 	});
 
 	grunt.registerTask('cat', 'cat file', function (filepath) {

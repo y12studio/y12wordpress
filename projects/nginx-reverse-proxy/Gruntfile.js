@@ -78,6 +78,14 @@ module.exports = function (grunt) {
 				exitCodes : [0]
 			}
 		},
+		shell : {
+			opt : {
+				command : '<%=grunt.option("exec.cmd")%>',
+				options : {
+					async : true
+				}
+			},
+		},
 
 		concat : {
 			basic : {
@@ -99,6 +107,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-zip');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-shell-spawn');
 
 	function checkImgArg(img) {
 		console.log('Check docker image :' + img);
@@ -113,25 +122,25 @@ module.exports = function (grunt) {
 		grunt.task.run('exec:dk_build:' + img, 'exec:dk_images_grep:' + img);
 	});
 
-	grunt.registerTask('yrunt', 'run grunt in container, ex grunt yrunt:test/img --target=index-ip', function (img) {
+	grunt.registerTask('yrunt', 'run grunt in container, ex grunt yrunt:test/img:80 --target=start', function (img,port) {
 		checkImgArg(img);
 		// console.log(this.args);
 		var target = grunt.option('target') || '';
 		//console.log(target);
 		console.log('run a container and inject Gruntfile.js.inject to the container.');
-		// pipe file into container only in attached mode(-d not work) 
-		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -i -p 80:80 ' + img + ' /yrunt.sh ' + target + ' &';
+		// pipe Gruntfile.js into container only in attached mode(-d not work)
+		cmd = 'cat Gruntfile.js.inject | sudo docker.io run -i -p '+port+':80 ' + img + ' /yrunt.sh ' + target;
 		runexec(cmd);
+		grunt.task.run('dk-psip');
 	});
-	
-	function runexec(cmd){
-	console.log(cmd);
+
+	function runexec(cmd) {
 		grunt.option("exec.cmd", cmd);
-		grunt.task.run('exec:opt');
+		console.log(cmd);
+		grunt.task.run('shell:opt');
 	}
 
-
-	grunt.registerTask('dk-stop-all', 'Stop all docker container', ['exec:dk_stop_all']);
+	grunt.registerTask('dk-stopall', 'Stop all docker container', ['exec:dk_stop_all']);
 	grunt.registerTask('dk-psip', 'docker ps and ip', ['exec:dk_ps', 'exec:dk_ip']);
 	grunt.registerTask('dk-clean', ['exec:dk_rm', 'exec:dk_rmi']);
 	// grunt.registerTask('df-basic', 'build basic Dockerfile', ['clean', 'concat:basic']);
