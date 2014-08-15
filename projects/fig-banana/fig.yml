@@ -1,0 +1,10 @@
+web:
+  build: .
+  ports:
+    - "8080:80"
+  links:
+    - db
+db:
+  image: orchardup/mysql
+  environment:
+    MYSQL_DATABASE: wordpress

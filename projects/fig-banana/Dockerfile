@@ -10,13 +10,16 @@ RUN locale-gen zh_TW.UTF-8
 RUN /usr/sbin/enable_insecure_key
 
 RUN apt-get update -y
-RUN apt-get install -y curl wget python git unzip nginx
+RUN apt-get install -y curl wget python git unzip nginx pwgen
 
 # install hhvm
 RUN wget -O - http://dl.hhvm.com/conf/hhvm.gpg.key | apt-key add -
 RUN echo deb http://dl.hhvm.com/ubuntu trusty main | tee /etc/apt/sources.list.d/hhvm.list
 RUN apt-get update
 RUN apt-get install -y hhvm
+
+# install wordpress
+RUN cd /tmp && curl http://wordpress.org/latest.tar.gz | tar -zxvf - && mv wordpress /mnt/hhvm
 
 # nginx
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
@@ -30,7 +33,9 @@ RUN chmod +x /etc/service/hhvm/run
 RUN /usr/share/hhvm/install_fastcgi.sh
 
 # webpage
-ADD index.hh /mnt/hhvm/index.hh
+# ADD index.hh /mnt/hhvm/index.hh
+ADD wpinit.sh /etc/my_init.d/wpinit.sh
+RUN chmod +x /etc/my_init.d/wpinit.sh
 
 # expose port 80
 EXPOSE 80
