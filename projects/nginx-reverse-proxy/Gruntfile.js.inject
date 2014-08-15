@@ -92,8 +92,8 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('start', 'modify index.html and start nginx', function () {
-		//grunt.task.run('index-ip', 'shell:nginx');
-		grunt.task.run('index-ip','nginx:start');
+		grunt.task.run('index-ip', 'shell:nginx');
+		//grunt.task.run('index-ip','nginx:start');
 	});
 
 	grunt.registerTask('cat', 'cat file', function (filepath) {
